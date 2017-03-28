@@ -9,13 +9,14 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import AssetsPlugin from 'assets-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import pkg from '../package.json';
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
 const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
+
+const nodeExternals = require('webpack-node-externals');
 
 //
 // Common configuration chunk to be used for both
@@ -27,7 +28,7 @@ const config = {
 
   output: {
     path: path.resolve(__dirname, '../build/public/client'),
-    // publicPath: '/assets/',
+    publicPath: '/public',
     pathinfo: isVerbose,
   },
 
@@ -290,6 +291,8 @@ const serverConfig = {
   },
 
   devtool: isDebug ? 'cheap-module-source-map' : 'source-map',
+
+  externals: [nodeExternals()],
 };
 
 export default [clientConfig, serverConfig];

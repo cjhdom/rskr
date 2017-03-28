@@ -109,6 +109,7 @@
     "webpack-bundle-analyzer": "^2.3.0",
     "webpack-dev-middleware": "^1.10.0",
     "webpack-hot-middleware": "^2.16.1",
+    "webpack-node-externals": "^1.5.4",
     "write-file-webpack-plugin": "^3.4.2"
   },
   "babel": {
@@ -153,43 +154,6 @@
       "react/jsx-filename-extension": "off",
       "react/prefer-stateless-function": "off"
     }
-  },
-  "stylelint": {
-    "extends": "stylelint-config-standard",
-    "rules": {
-      "string-quotes": "single",
-      "property-no-unknown": [
-        true,
-        {
-          "ignoreProperties": [
-            "composes"
-          ]
-        }
-      ],
-      "selector-pseudo-class-no-unknown": [
-        true,
-        {
-          "ignorePseudoClasses": [
-            "global"
-          ]
-        }
-      ]
-    }
-  },
-  "lint-staged": {
-    "*.{cmd,html,json,md,sh,txt,xml,yml}": [
-      "editorconfig-tools fix",
-      "git add"
-    ],
-    "*.{js,jsx}": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.{css,less,scss,sss}": [
-      "stylefmt",
-      "stylelint",
-      "git add"
-    ]
   },
   "scripts": {
     "lint:js": "eslint src tools",
