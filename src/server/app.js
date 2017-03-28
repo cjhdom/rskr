@@ -8,14 +8,18 @@ const path = require('path');
 const app = express();
 
 app.disable('x-powered-by');
-app.set('views', path.join(__dirname, '../client'));
+// app.set('views', __dirname);
+app.set('views', path.join(__dirname, 'public'));
 app.set('view engine', 'ejs');
 
-app.use(express.static(path.join(__dirname, '../client')));
+// app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', (req, res) => {
-  res.send('hi');
+  res.render('index');
 });
 
 const server = http.createServer(app);
-server.listen(4561);
+server.listen(8888, () => {
+  console.log('server listening on 8888');
+});

@@ -26,8 +26,8 @@ const config = {
   context: path.resolve(__dirname, '..'),
 
   output: {
-    path: path.resolve(__dirname, '../build/public/assets'),
-    publicPath: '/assets/',
+    path: path.resolve(__dirname, '../build/public/client'),
+    // publicPath: '/assets/',
     pathinfo: isVerbose,
   },
 
@@ -177,21 +177,6 @@ const clientConfig = {
       __DEV__: isDebug,
     }),
 
-    // Emit a file with assets paths
-    // https://github.com/sporto/assets-webpack-plugin#options
-    new AssetsPlugin({
-      path: path.resolve(__dirname, '../build'),
-      filename: 'assets.json',
-      prettyPrint: true,
-    }),
-
-    // Move modules that occur in multiple entry chunks to a new entry chunk (the commons chunk).
-    // http://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: module => /node_modules/.test(module.resource),
-    }),
-
     ...isDebug ? [] : [
       // Minimize all JavaScript output of chunks
       // https://github.com/mishoo/UglifyJS2#compressor-options
@@ -273,16 +258,6 @@ const serverConfig = {
     })),
   },
 
-  externals: [
-    /^\.\/assets\.json$/,
-    (context, request, callback) => {
-      const isExternal =
-        request.match(/^[@a-z][a-z/.\-0-9]*$/i) &&
-        !request.match(/\.(css|less|scss|sss)$/i);
-      callback(null, Boolean(isExternal));
-    },
-  ],
-
   plugins: [
     // Define free variables
     // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
@@ -306,12 +281,12 @@ const serverConfig = {
   ],
 
   node: {
-    console: false,
+    console: true,
     global: false,
-    process: false,
+    process: true,
     Buffer: false,
     __filename: false,
-    __dirname: false,
+    __dirname: true,
   },
 
   devtool: isDebug ? 'cheap-module-source-map' : 'source-map',
