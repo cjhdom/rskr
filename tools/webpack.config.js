@@ -24,11 +24,11 @@ const nodeExternals = require('webpack-node-externals');
 // -----------------------------------------------------------------------------
 
 const config = {
-  context: path.resolve(__dirname, '..'),
+  context: path.resolve(__dirname, '../src'),
 
   output: {
-    path: path.resolve(__dirname, '../build/public/client'),
-    publicPath: '/public',
+    path: path.resolve(__dirname, '../build/'),
+    publicPath: '/client/',
     pathinfo: isVerbose,
   },
 
@@ -160,13 +160,13 @@ const clientConfig = {
   target: 'web',
 
   entry: {
-    client: ['babel-polyfill', './src/client/index.js'],
+    client: ['./client/index.js'],
   },
 
   output: {
     ...config.output,
-    filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
-    chunkFilename: isDebug ? '[name].chunk.js' : '[name].[chunkhash:8].chunk.js',
+    filename: isDebug ? './client/[name].js' : './client/[name].[chunkhash:8].js',
+    chunkFilename: isDebug ? './client/[name].chunk.js' : './client/[name].[chunkhash:8].chunk.js',
   },
 
   plugins: [
@@ -230,12 +230,12 @@ const serverConfig = {
   target: 'node',
 
   entry: {
-    server: ['babel-polyfill', './src/server/app.js'],
+    server: ['babel-polyfill', './server/app.js'],
   },
 
   output: {
     ...config.output,
-    filename: '../../server.js',
+    filename: 'server.js',
     libraryTarget: 'commonjs2',
   },
 
@@ -272,13 +272,6 @@ const serverConfig = {
     // https://webpack.github.io/docs/list-of-plugins.html#limitchunkcountplugin
     new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
 
-    // Adds a banner to the top of each generated chunk
-    // https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
-    new webpack.BannerPlugin({
-      banner: 'require("source-map-support").install();',
-      raw: true,
-      entryOnly: false,
-    }),
   ],
 
   node: {

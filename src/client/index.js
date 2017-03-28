@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 
 ReactDOM.render(
   <div>
-    hello world
+    hello world!
   </div>,
   document.getElementById('root'),
 );
