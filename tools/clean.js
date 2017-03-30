@@ -14,10 +14,10 @@ import { cleanDir } from './lib/fs';
  */
 function clean() {
   return Promise.all([
-    cleanDir('build/*', {
+    cleanDir('dist/*', {
       nosort: true,
       dot: true,
-      ignore: ['build/.git'],
+      ignore: ['dist/.git'],
     }),
   ]);
 }

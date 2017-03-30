@@ -12,11 +12,19 @@ import webpack from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import pkg from '../package.json';
 
+const fs = require('fs');
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
 const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
 const nodeExternals = require('webpack-node-externals');
+
+const nodeModules = {};
+fs.readdirSync('node_modules')
+  .filter(x => ['.bin'].indexOf(x) === -1)
+  .forEach((mod) => {
+    nodeModules[mod] = `commonjs ${mod}`
+  });
 
 //
 // Common configuration chunk to be used for both
@@ -27,15 +35,15 @@ const config = {
   context: path.resolve(__dirname, '../src'),
 
   output: {
-    path: path.resolve(__dirname, '../build/'),
-    publicPath: '/client/',
+    path: path.resolve(__dirname, '../dist/src/src/client/js/'),
+    publicPath: '/js/',
     pathinfo: isVerbose,
   },
 
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.js?$/,
         loader: 'babel-loader',
         include: [
           path.resolve(__dirname, '../src'),
@@ -163,10 +171,14 @@ const clientConfig = {
     client: ['./client/index.js'],
   },
 
+  resolve: {
+    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
+  },
+
   output: {
     ...config.output,
-    filename: isDebug ? './client/[name].js' : './client/[name].[chunkhash:8].js',
-    chunkFilename: isDebug ? './client/[name].chunk.js' : './client/[name].[chunkhash:8].chunk.js',
+    filename: '[name].js',
+    chunkFilename: isDebug ? '.[name].chunk.js' : '[name].[chunkhash:8].chunk.js',
   },
 
   plugins: [
@@ -217,6 +229,11 @@ const clientConfig = {
     net: 'empty',
     tls: 'empty',
   },
+
+  externals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM',
+  },
 };
 
 //
@@ -235,7 +252,7 @@ const serverConfig = {
 
   output: {
     ...config.output,
-    filename: 'server.js',
+    filename: '../../../server/server.js',
     libraryTarget: 'commonjs2',
   },
 
@@ -275,17 +292,17 @@ const serverConfig = {
   ],
 
   node: {
-    console: true,
+    console: false,
     global: false,
-    process: true,
+    process: false,
     Buffer: false,
     __filename: false,
-    __dirname: true,
+    __dirname: false,
   },
 
   devtool: isDebug ? 'cheap-module-source-map' : 'source-map',
 
-  externals: [nodeExternals()],
+  externals: [nodeExternals(), nodeModules],
 };
 
 export default [clientConfig, serverConfig];

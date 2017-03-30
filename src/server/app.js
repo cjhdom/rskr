@@ -7,15 +7,18 @@ const path = require('path');
 
 const app = express();
 
+console.log(path.resolve('') + ' vs ' + __dirname);
+
+
 app.disable('x-powered-by');
+app.set('views', path.join(path.resolve(''), 'dist/src/client'));
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../client'));
+app.engine('ejs', require('ejs').renderFile);
 
 // app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, '../client')));
 
 app.use('/', (req, res) => {
-  console.log('hi');
   res.render('layout');
 });
 

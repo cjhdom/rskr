@@ -12,13 +12,14 @@ import chokidar from 'chokidar';
 import { writeFile, copyFile, makeDir, copyDir, cleanDir } from './lib/fs';
 import pkg from '../package.json';
 import { format } from './run';
-
+const glob = require('glob');
+const webpackConfig = require('./webpack.config');
 /**
  * Copies static files such as robots.txt, favicon.ico to the
  * output (build) folder.
  */
 async function copy() {
-  await makeDir('build');
+/*  await makeDir('build');
   await Promise.all([
     writeFile('build/package.json', JSON.stringify({
       private: true,
@@ -30,7 +31,17 @@ async function copy() {
     }, null, 2)),
     copyFile('LICENSE.txt', 'build/LICENSE.txt'),
     copyDir('public', 'build/public'),
-  ]);
+  ]);*/
+  const urls = Object.keys(webpackConfig.default[0].entry);
+  const ejsFiles = await(files('src/**/*.ejs'));
+
+  await(makeDir('dist/src/client'));
+  //await(makeDir('dist/src/client/bridge'));
+  //await(Promise.all(urls.map(url => makeDir(`dist/src/client/${url}`))));
+  await(Promise.all([
+      ...ejsFiles.map(ejs => copyFile(ejs, `dist/${ejs}`))
+    ]
+  ));
 
   if (process.argv.includes('--watch')) {
     const watcher = chokidar.watch([
@@ -59,6 +70,18 @@ async function copy() {
       console.log(`[${format(end)}] ${event} '${dist}' after ${time} ms`);
     });
   }
+}
+
+function files (pattern) {
+  return new Promise((resolve, reject) => {
+    glob(pattern, function (err, files) {
+      if (!err) {
+        resolve(files)
+      } else {
+        reject(err)
+      }
+    })
+  })
 }
 
 export default copy;
